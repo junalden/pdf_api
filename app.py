@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 import requests
 import PyPDF2
 import json
@@ -101,10 +101,13 @@ def process_pdf():
     excel_file_path = os.path.join('/tmp', 'gemini_response.xlsx')
     save_markdown_to_excel(markdown_text, excel_file_path)
 
-    # Optionally, clean up the temporary files
-    os.remove(pdf_path)
-
-    return jsonify({"message": "PDF processed successfully.", "file": excel_file_path}), 200
+    # Return the file for download
+    return send_file(
+        excel_file_path,
+        as_attachment=True,
+        download_name='gemini_response.xlsx',
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)
