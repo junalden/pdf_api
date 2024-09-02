@@ -5,7 +5,12 @@ import json
 from openpyxl import Workbook
 import os
 
+
+from flask_cors import CORS  # Import CORS
+
 app = Flask(__name__)
+CORS(app)  
+
 
 # Define your API key and endpoint URL
 API_KEY = 'AIzaSyATdOo-sWAQqVPmdaf8nHZvUhmn8Sc3aGw'  # Replace with your actual API key
