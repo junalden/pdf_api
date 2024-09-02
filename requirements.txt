@@ -3,3 +3,5 @@ requests
 PyPDF2
 openpyxl
 gunicorn
+flask-cors
+
