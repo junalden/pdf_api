@@ -4,17 +4,14 @@ import PyPDF2
 import json
 from openpyxl import Workbook
 import os
-
-
-from flask_cors import CORS  # Import CORS
+from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  
-
+CORS(app)  # Enable CORS for all routes
 
 # Define your API key and endpoint URL
 API_KEY = 'AIzaSyATdOo-sWAQqVPmdaf8nHZvUhmn8Sc3aGw'  # Replace with your actual API key
-url = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key={API_KEY}"
+url = f"https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key={API_KEY}"
 
 # Function to extract text from a PDF
 def extract_text_from_pdf(pdf_path):
@@ -72,7 +69,16 @@ def save_markdown_to_excel(markdown_text, file_path):
 
 @app.route('/process-pdf', methods=['POST'])
 def process_pdf():
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part"}), 400
+
     file = request.files['file']
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+
+    if not file.filename.endswith('.pdf'):
+        return jsonify({"error": "Invalid file type. Only PDF files are allowed."}), 400
+
     pdf_path = os.path.join('/tmp', file.filename)
     file.save(pdf_path)
 
@@ -94,6 +100,9 @@ def process_pdf():
 
     excel_file_path = os.path.join('/tmp', 'gemini_response.xlsx')
     save_markdown_to_excel(markdown_text, excel_file_path)
+
+    # Optionally, clean up the temporary files
+    os.remove(pdf_path)
 
     return jsonify({"message": "PDF processed successfully.", "file": excel_file_path}), 200
 
