@@ -91,12 +91,13 @@ def process_pdf():
     else:
         prompts = []
 
-    # Construct custom prompt based on the received prompts
+    
+ # Construct custom prompt based on the received prompts
     custom_text = "Make me a summary in table format:\n"
     for row in prompts:
         column_name = row.get('columnName', '')
         transformation = row.get('transformation', '')
-        custom_text += f"Column Name: {column_name}, Transformation: {transformation}\n"
+        custom_text += f"Column Name: {column_name}, then format {column_name} to {transformation}.\n"
     
     combined_text = custom_text + "\n\n" + pdf_text
 
@@ -119,7 +120,7 @@ def process_pdf():
     return send_file(
         excel_file_path,
         as_attachment=True,
-        download_name='gemini_response.xlsx',
+        download_name='PDFxCel Result.xlsx',
         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
 
