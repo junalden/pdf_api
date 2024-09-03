@@ -83,16 +83,24 @@ def process_pdf():
     file.save(pdf_path)
 
     pdf_text = extract_text_from_pdf(pdf_path)
+    
+    # Get custom prompts from form data
+    prompts = request.form.get("prompts")
+    if prompts:
+        prompts = json.loads(prompts)
+    else:
+        prompts = []
 
-    # Read the custom prompt from the request
-    prompts = request.form.get('prompts', '[]')
-    prompts = json.loads(prompts)
+    # Construct custom prompt based on the received prompts
+    custom_text = "Here is the PDF data. Apply the following transformations:\n"
+    for row in prompts:
+        column_name = row.get('columnName', '')
+        transformation = row.get('transformation', '')
+        custom_text += f"Column Name: {column_name}, Transformation: {transformation}\n"
+    
+    combined_text = custom_text + "\n\n" + pdf_text
 
-    # Create the custom prompt for Gemini API
-    custom_prompts = [f"Column Name: {row['columnName']}, Transformation: {row['transformation']}" for row in prompts]
-    combined_prompt = "Map and transform the following data:\n" + "\n".join(custom_prompts) + "\n\n" + pdf_text
-
-    gemini_response = process_text_with_gemini(combined_prompt)
+    gemini_response = process_text_with_gemini(combined_text)
 
     if 'error' in gemini_response:
         return jsonify(gemini_response), 400
