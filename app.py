@@ -92,7 +92,7 @@ def process_pdf():
         prompts = []
 
     # Construct custom prompt based on the received prompts
-    custom_text = "Here is the PDF data. Apply the following transformations:\n"
+    custom_text = "Make me a summary in table format:\n"
     for row in prompts:
         column_name = row.get('columnName', '')
         transformation = row.get('transformation', '')
