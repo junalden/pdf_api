@@ -83,10 +83,16 @@ def process_pdf():
     file.save(pdf_path)
 
     pdf_text = extract_text_from_pdf(pdf_path)
-    custom_text = "make me a summary in table format for excel for HS CODE, Number and Kind, Description, Invoice No., Dutiable Value, CUD and VAT"
-    combined_text = custom_text + "\n\n" + pdf_text
 
-    gemini_response = process_text_with_gemini(combined_text)
+    # Read the custom prompt from the request
+    prompts = request.form.get('prompts', '[]')
+    prompts = json.loads(prompts)
+
+    # Create the custom prompt for Gemini API
+    custom_prompts = [f"Column Name: {row['columnName']}, Transformation: {row['transformation']}" for row in prompts]
+    combined_prompt = "Map and transform the following data:\n" + "\n".join(custom_prompts) + "\n\n" + pdf_text
+
+    gemini_response = process_text_with_gemini(combined_prompt)
 
     if 'error' in gemini_response:
         return jsonify(gemini_response), 400
