@@ -10,7 +10,7 @@ app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
 # Define your API key and endpoint URL
-API_KEY = 'AIzaSyATdOo-sWAQqVPmdaf8nHZvUhmn8Sc3aGw'  # Replace with your actual API key
+API_KEY = 'AIzaSyD4YshrZAd_paKOCrQOTpFzL0Xx7XTjn28'  # Replace with your actual API key
 url = f"https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key={API_KEY}"
 
 # Function to extract text from a PDF
